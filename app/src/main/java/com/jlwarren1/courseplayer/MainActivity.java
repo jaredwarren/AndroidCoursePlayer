@@ -3,6 +3,7 @@ package com.jlwarren1.courseplayer;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,6 +13,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ExpandableListView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -21,7 +25,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -38,8 +42,102 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        //NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        //navigationView.setNavigationItemSelectedListener(this);
+
+        setGroupData();
+        setChildGroupData();
+
+        initDrawer();
+
+        //navigationView.se
+
+        //var navView = (NavigationView) findViewById(R.id.drawMenu);
+        /*Menu m = navigationView.getMenu();
+        SubMenu topChannelMenu = m.addSubMenu("Top Channels");
+        SubMenu s1 = topChannelMenu.addSubMenu("sub1");
+        topChannelMenu.add("Foo");
+        s1.add("Bar");
+        s1.add("Baz");*/
+    }
+
+    //private DrawerLayout drawer;
+    private ExpandableListView drawerList;
+    private void initDrawer() {
+        //drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        drawerList = (ExpandableListView) findViewById(R.id.left_drawer);
+
+        drawerList.setAdapter(new NewAdapter(this, groupItem, childItem));
+
+        //drawerList.setOnChildClickListener(this);
+
+        // actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawer,
+        // R.drawable.ic_drawer, R.string.open_drawer,
+        // R.string.close_drawer) {
+        // public void onDrawerClosed(View view) {
+        // getActionBar().setSubtitle("open");
+        // }
+        //
+        // /** Called when a drawer has settled in a completely open state. */
+        // public void onDrawerOpened(View drawerView) {
+        // getActionBar().setSubtitle("close");
+        // }
+        //
+        // };
+        //
+        // drawer.setDrawerListener(actionBarDrawerToggle);
+
+    }
+
+    public void setGroupData() {
+        groupItem.add("Technology");
+        groupItem.add("Mobile");
+        groupItem.add("Manufacturer");
+        groupItem.add("Extras");
+    }
+
+    ArrayList<String> groupItem = new ArrayList<String>();
+    ArrayList<Object> childItem = new ArrayList<Object>();
+
+    public void setChildGroupData() {
+        /**
+         * Add Data For TecthNology
+         */
+        ArrayList<String> child = new ArrayList<String>();
+        child.add("Java");
+        child.add("Drupal");
+        child.add(".Net Framework");
+        child.add("PHP");
+        childItem.add(child);
+
+        /**
+         * Add Data For Mobile
+         */
+        child = new ArrayList<String>();
+        child.add("Android");
+        child.add("Window Mobile");
+        child.add("iPHone");
+        child.add("Blackberry");
+        childItem.add(child);
+        /**
+         * Add Data For Manufacture
+         */
+        child = new ArrayList<String>();
+        child.add("HTC");
+        child.add("Apple");
+        child.add("Samsung");
+        child.add("Nokia");
+        childItem.add(child);
+        /**
+         * Add Data For Extras
+         */
+        child = new ArrayList<String>();
+        child.add("Contact Us");
+        child.add("About Us");
+        child.add("Location");
+        child.add("Root Cause");
+        childItem.add(child);
     }
 
     @Override
