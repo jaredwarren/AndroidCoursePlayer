@@ -19,8 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener{
+public class MainActivity extends AppCompatActivity implements ExpandableListView.OnChildClickListener{
 
     private DrawerLayout mDrawerLayout;
     ExpandableListAdapter mMenuAdapter;
@@ -58,24 +57,69 @@ public class MainActivity extends AppCompatActivity
 
         // Setup nav view
         expandableList = (ExpandableListView) findViewById(R.id.expanded_menu);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
-        if (navigationView != null) {
-            //setupDrawerContent(navigationView);
-        }
 
-        prepareListData();
-        mMenuAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild, expandableList);
+
+        mMenuAdapter = prepareListData();
 
         // setting list adapter
         expandableList.setAdapter(mMenuAdapter);
+        expandableList.setOnChildClickListener(this);
+
     }
 
-    private void prepareListData() {
+    private ExpandableListAdapter prepareListData() {
         listDataHeader = new ArrayList<>();
         listDataChild = new HashMap<>();
 
-        ExpandedMenuModel item1 = new ExpandedMenuModel();
+        ExpandableTreeItem root = new ExpandableTreeItem();
+        root.isLeaf = false;
+        root.title = "root";
+        root.children =  new ArrayList<>();
+
+        ExpandableTreeItem p1 = new ExpandableTreeItem();
+        p1.isLeaf = true;
+        p1.title = "Page 1";
+        root.children.add(p1);
+
+        ExpandableTreeItem topic1 = new ExpandableTreeItem();
+        topic1.isLeaf = false;
+        topic1.title = "Topic 1";
+        topic1.children =  new ArrayList<>();
+
+        ExpandableTreeItem p2 = new ExpandableTreeItem();
+        p2.isLeaf = true;
+        p2.title = "Page 2";
+        topic1.children.add(p2);
+
+        root.children.add(topic1);
+
+
+
+        // TODO: figure out how to make page in root not expandable, and sub-topic expandable in topic
+
+
+        ExpandableTreeItem topic2 = new ExpandableTreeItem();
+        topic2.isLeaf = false;
+        topic2.title = "Topic 2";
+        topic2.children =  new ArrayList<>();
+
+
+        ExpandableTreeItem topic2a = new ExpandableTreeItem();
+        topic2a.isLeaf = false;
+        topic2a.title = "Topic 2a";
+        topic2a.children =  new ArrayList<>();
+
+        ExpandableTreeItem p3 = new ExpandableTreeItem();
+        p3.isLeaf = true;
+        p3.title = "Page 3";
+        topic2a.children.add(p3);
+
+        topic2.children.add(topic2a);
+        root.children.add(topic2);
+
+
+        /*ExpandedMenuModel item1 = new ExpandedMenuModel();
         item1.setIconName("heading1");
         item1.setIconImg(R.drawable.ic_menu_gallery);
         // Adding data header
@@ -101,8 +145,20 @@ public class MainActivity extends AppCompatActivity
         heading2.add("Submenu of item 2");
 
         listDataChild.put(listDataHeader.get(0), heading1);// Header, Child data
-        listDataChild.put(listDataHeader.get(1), heading2);
+        listDataChild.put(listDataHeader.get(1), heading2);*/
 
+        ExpandableListAdapter menuAdapter = new ExpandableListAdapter(this, expandableList, root.children );
+        return menuAdapter;
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -113,6 +169,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.i("-", "on tap:" + item.toString());
         switch (item.getItemId()) {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
@@ -121,23 +178,12 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    private void setupDrawerContent(NavigationView navigationView) {
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        menuItem.setChecked(true);
-                        mDrawerLayout.closeDrawers();
-                        return true;
-                    }
-                });
-    }
-
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        Log.i("...", "on tap:"+item.toString());
-        item.setChecked(true);
+    public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+        Log.i("...", "on tap:"+v.toString());
+        //item.setChecked(true);
         mDrawerLayout.closeDrawers();
         return true;
     }
+
 }

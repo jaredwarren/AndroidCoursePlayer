@@ -1,67 +1,43 @@
 package com.jlwarren1.courseplayer;
 
+import java.util.List;
+
 import android.content.Context;
-import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.HashMap;
-import java.util.List;
-
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
+
     private Context mContext;
-    private List<ExpandedMenuModel> mListDataHeader; // header titles
+    private ExpandableListView mListView;
+    private List mModel;
 
-    // child data in format of header title, child title
-    private HashMap<ExpandedMenuModel, List<String>> mListDataChild;
-    ExpandableListView expandList;
-
-    public ExpandableListAdapter(Context context, List<ExpandedMenuModel> listDataHeader, HashMap<ExpandedMenuModel, List<String>> listChildData, ExpandableListView mView) {
-        this.mContext = context;
-        this.mListDataHeader = listDataHeader;
-        this.mListDataChild = listChildData;
-        this.expandList = mView;
+    public ExpandableListAdapter(Context pContext, ExpandableListView pListView, List pModel){
+        this.mContext = pContext;
+        this.mListView = pListView;
+        this.mModel = pModel;
     }
 
-    @Override
-    public int getGroupCount() {
-        int i = mListDataHeader.size();
-        Log.d("GROUPCOUNT", String.valueOf(i));
-        return this.mListDataHeader.size();
-    }
-
-    @Override
-    public int getChildrenCount(int groupPosition) {
-        int childCount = 0;
-        if (groupPosition != 2) {
-            childCount = this.mListDataChild.get(this.mListDataHeader.get(groupPosition))
-                    .size();
+    /*public void addItem(DetailsModel item, SampleModel groupData){
+        if(!mModel.contains(groupData)){
+            mModel.add(groupData);
         }
-        return childCount;
-    }
 
-    @Override
-    public Object getGroup(int groupPosition) {
-        return this.mListDataHeader.get(groupPosition);
-    }
+        int ind = mModel.indexOf(groupData);
+        List lstItems =  mModel.get(ind).getItems();
+        lstItems.add(item);
+        mModel.get(ind).setItems(lstItems);
+    }*/
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        Log.d("CHILD", mListDataChild.get(this.mListDataHeader.get(groupPosition))
-                .get(childPosition).toString());
-        return this.mListDataChild.get(this.mListDataHeader.get(groupPosition))
-                .get(childPosition);
-    }
-
-    @Override
-    public long getGroupId(int groupPosition) {
-        return groupPosition;
+        List item = ((ExpandableTreeItem) mModel.get(groupPosition)).children;
+        return item.get(childPosition);
     }
 
     @Override
@@ -70,47 +46,66 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
+    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View view,
+                             ViewGroup parent) {
+        ExpandableTreeItem item = (ExpandableTreeItem)getChild(groupPosition, childPosition);
+        if(view == null){
+            LayoutInflater infalInflater = (LayoutInflater) this.mContext
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = infalInflater.inflate(R.layout.list_submenu, null);
+        }
+
+        TextView txtCountry = (TextView)view.findViewById(R.id.submenu);
+        txtCountry.setText(item.title);
+        return view;
+    }
+
+    @Override
+    public int getChildrenCount(int groupPosition) {
+        Log.i("getChildrenCount:", ((ExpandableTreeItem) mModel.get(groupPosition)).size()+"");
+        return ((ExpandableTreeItem) mModel.get(groupPosition)).size();
+    }
+
+    @Override
+    public Object getGroup(int groupPosition) {
+        return mModel.get(groupPosition);
+    }
+
+    @Override
+    public int getGroupCount() {
+        Log.i("getGroupCount:", mModel.size()+ "");
+        return mModel.size();
+    }
+
+    @Override
+    public long getGroupId(int groupPosition) {
+        return groupPosition;
+    }
+
+    @Override
+    public View getGroupView(int groupPosition, boolean isLastChild, View view, ViewGroup parent) {
+        ExpandableTreeItem model =  (ExpandableTreeItem)getGroup(groupPosition);
+        if(view == null){
+            LayoutInflater infalInflater = (LayoutInflater) this.mContext
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = infalInflater.inflate(R.layout.listheader, null);
+        }
+
+        TextView txtContinent = (TextView)view.findViewById(R.id.submenu);
+        txtContinent.setText(model.title);
+        return view;
+    }
+
+    @Override
     public boolean hasStableIds() {
-        return false;
-    }
-
-    @Override
-    public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-        ExpandedMenuModel headerTitle = (ExpandedMenuModel) getGroup(groupPosition);
-        if (convertView == null) {
-            LayoutInflater infalInflater = (LayoutInflater) this.mContext
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(R.layout.listheader, null);
-        }
-        TextView lblListHeader = (TextView) convertView
-                .findViewById(R.id.submenu);
-        ImageView headerIcon = (ImageView) convertView.findViewById(R.id.iconimage);
-        lblListHeader.setTypeface(null, Typeface.BOLD);
-        lblListHeader.setText(headerTitle.getIconName());
-        headerIcon.setImageResource(headerTitle.getIconImg());
-        return convertView;
-    }
-
-    @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        final String childText = (String) getChild(groupPosition, childPosition);
-
-        if (convertView == null) {
-            LayoutInflater infalInflater = (LayoutInflater) this.mContext
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(R.layout.list_submenu, null);
-        }
-
-        TextView txtListChild = (TextView) convertView
-                .findViewById(R.id.submenu);
-
-        txtListChild.setText(childText);
-
-        return convertView;
-    }
-
-    @Override
-    public boolean isChildSelectable(int groupPosition, int childPosition) {
+        // TODO Auto-generated method stub
         return true;
     }
+
+    @Override
+    public boolean isChildSelectable(int arg0, int arg1) {
+        // TODO Auto-generated method stub
+        return true;
+    }
+
 }
