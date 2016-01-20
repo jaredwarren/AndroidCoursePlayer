@@ -48,7 +48,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View view,
                              ViewGroup parent) {
-        ExpandableTreeItem item = (ExpandableTreeItem)getChild(groupPosition, childPosition);
+        ExpandableTreeItem item = (ExpandableTreeItem)getGroup(groupPosition);
         if(view == null){
             LayoutInflater infalInflater = (LayoutInflater) this.mContext
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);

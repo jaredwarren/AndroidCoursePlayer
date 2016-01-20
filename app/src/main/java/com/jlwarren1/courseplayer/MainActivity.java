@@ -2,7 +2,6 @@ package com.jlwarren1.courseplayer;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -16,16 +15,12 @@ import android.view.View;
 import android.widget.ExpandableListView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements ExpandableListView.OnChildClickListener{
 
     private DrawerLayout mDrawerLayout;
-    ExpandableListAdapter mMenuAdapter;
+    RootAdapter mMenuAdapter;
     ExpandableListView expandableList;
-    List<ExpandedMenuModel> listDataHeader;
-    HashMap<ExpandedMenuModel, List<String>> listDataChild;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,87 +63,73 @@ public class MainActivity extends AppCompatActivity implements ExpandableListVie
 
     }
 
-    private ExpandableListAdapter prepareListData() {
-        listDataHeader = new ArrayList<>();
-        listDataChild = new HashMap<>();
+    private RootAdapter prepareListData() {
+        //listDataHeader = new ArrayList<>();
+        //listDataChild = new HashMap<>();
 
-        ExpandableTreeItem root = new ExpandableTreeItem();
-        root.isLeaf = false;
-        root.title = "root";
-        root.children =  new ArrayList<>();
-
-        ExpandableTreeItem p1 = new ExpandableTreeItem();
-        p1.isLeaf = true;
-        p1.title = "Page 1";
-        root.children.add(p1);
-
-        ExpandableTreeItem topic1 = new ExpandableTreeItem();
-        topic1.isLeaf = false;
-        topic1.title = "Topic 1";
-        topic1.children =  new ArrayList<>();
-
-        ExpandableTreeItem p2 = new ExpandableTreeItem();
-        p2.isLeaf = true;
-        p2.title = "Page 2";
-        topic1.children.add(p2);
-
-        root.children.add(topic1);
-
-
-
-        // TODO: figure out how to make page in root not expandable, and sub-topic expandable in topic
+        ExpandableTreeItem  obj = new ExpandableTreeItem();
+        obj.children =  new ArrayList<>();
+        for(int i = 0;i<Constant.state.length;i++)
+        {
+            ExpandableTreeItem root =  new ExpandableTreeItem();
+            root.title = Constant.state[i];
+            root.children =  new ArrayList<>();
+            for(int j=0;j<Constant.parent[i].length;j++)
+            {
+                ExpandableTreeItem parent =  new ExpandableTreeItem();
+                parent.title=Constant.parent[i][j];
+                parent.children =  new ArrayList<>();
+                for(int k=0;k<Constant.child[i][j].length;k++)
+                {
+                    ExpandableTreeItem child =  new ExpandableTreeItem();
+                    child.title =Constant.child[i][j][k];
+                    parent.children.add(child);
+                }
+                root.children.add(parent);
+            }
+            obj.children.add(root);
+        }
 
 
-        ExpandableTreeItem topic2 = new ExpandableTreeItem();
-        topic2.isLeaf = false;
-        topic2.title = "Topic 2";
-        topic2.children =  new ArrayList<>();
+        final ExpandableListView elv = (ExpandableListView) findViewById(R.id.expanded_menu);
+
+        elv.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v,
+                                        int groupPosition, long id) {
+
+                return true; /* or false depending on what you need */
+            }
+        });
 
 
-        ExpandableTreeItem topic2a = new ExpandableTreeItem();
-        topic2a.isLeaf = false;
-        topic2a.title = "Topic 2a";
-        topic2a.children =  new ArrayList<>();
+        ExpandableListView.OnGroupClickListener grpLst = new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView eListView, View view, int groupPosition,
+                                        long id) {
 
-        ExpandableTreeItem p3 = new ExpandableTreeItem();
-        p3.isLeaf = true;
-        p3.title = "Page 3";
-        topic2a.children.add(p3);
-
-        topic2.children.add(topic2a);
-        root.children.add(topic2);
+                return true; /* or false depending on what you need */
+            }
+        };
 
 
-        /*ExpandedMenuModel item1 = new ExpandedMenuModel();
-        item1.setIconName("heading1");
-        item1.setIconImg(R.drawable.ic_menu_gallery);
-        // Adding data header
-        listDataHeader.add(item1);
+        ExpandableListView.OnChildClickListener childLst = new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView eListView, View view, int groupPosition,
+                                        int childPosition, long id) {
 
-        ExpandedMenuModel item2 = new ExpandedMenuModel();
-        item2.setIconName("heading2");
-        item2.setIconImg(R.drawable.ic_menu_camera);
-        listDataHeader.add(item2);
+                return true; /* or false depending on what you need */
+            }
+        };
 
-        ExpandedMenuModel item3 = new ExpandedMenuModel();
-        item3.setIconName("heading3");
-        item3.setIconImg(R.drawable.ic_menu_send);
-        listDataHeader.add(item3);
+        ExpandableListView.OnGroupExpandListener grpExpLst = new ExpandableListView.OnGroupExpandListener() {
+            @Override
+            public void onGroupExpand(int groupPosition) {
 
-        // Adding child data
-        List<String> heading1 = new ArrayList<>();
-        heading1.add("Submenu of item 1");
-
-        List<String> heading2 = new ArrayList<>();
-        heading2.add("Submenu of item 2");
-        heading2.add("Submenu of item 2");
-        heading2.add("Submenu of item 2");
-
-        listDataChild.put(listDataHeader.get(0), heading1);// Header, Child data
-        listDataChild.put(listDataHeader.get(1), heading2);*/
-
-        ExpandableListAdapter menuAdapter = new ExpandableListAdapter(this, expandableList, root.children );
-        return menuAdapter;
+            }
+        };
+        return new RootAdapter(this, obj, grpLst, childLst, grpExpLst);
     }
 
     @Override
