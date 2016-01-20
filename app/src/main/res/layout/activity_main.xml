@@ -21,13 +21,23 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main"
         >
-        <ExpandableListView
+
+        <LinearLayout
+            android:id="@+id/tree_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="192dp"
+            android:orientation="vertical">
+
+        </LinearLayout>
+
+        <!--<ExpandableListView
             android:id="@+id/expanded_menu"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginTop="192dp"
             android:background="@android:color/white">
-        </ExpandableListView>
+        </ExpandableListView>-->
 
     </android.support.design.widget.NavigationView>
 
