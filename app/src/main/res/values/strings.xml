@@ -5,4 +5,9 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="rules_title">Rules Title:</string>
+    <string name="rules_button">Rules Button</string>
+    <string name="rule1"> 1. Offended man himself inflicts insult others. </string>
+    <string name="rule2"> 2. We are moving to a higher level, when we start to treat others better than they treat us. </string>
+    <string name="rule3"> 3. When we help others, we help ourselves. </string>
 </resources>

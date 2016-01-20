@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.RelativeLayout;
 
 import com.unnamed.b.atv.model.TreeNode;
 import com.unnamed.b.atv.view.AndroidTreeView;
@@ -27,6 +28,8 @@ public class MainActivity extends AppCompatActivity implements ExpandableListVie
     private DrawerLayout mDrawerLayout;
     ExpandableListAdapter mMenuAdapter;
     ExpandableListView expandableList;
+
+    RelativeLayout treeContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +57,24 @@ public class MainActivity extends AppCompatActivity implements ExpandableListVie
         mDrawerLayout.setDrawerListener(toggle);
         toggle.syncState();
 
-        // Tree stuff
 
-        TreeItemHolder.IconTreeItem nodeItem = new TreeItemHolder.IconTreeItem();
+
+        // TODO:figure out how to add tap style, figure out how to indent children, add icon....
+
+
+
+
+
+
+        // Tree stuff
+        AndroidTreeView tView = new AndroidTreeView(this, new ContentMaker(this).root);
+        tView.setDefaultViewHolder(TreeViewHolder.class);
+        treeContainer = (RelativeLayout) findViewById(R.id.tree_container);
+        treeContainer.addView(tView.getView());
+        tView.expandLevel(1);
+
+
+       /* TreeItemHolder.IconTreeItem nodeItem = new TreeItemHolder.IconTreeItem();
         nodeItem.text = "TEST...";
         TreeNode parent = new TreeNode(nodeItem).setViewHolder(new TreeItemHolder(this));
 
@@ -77,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements ExpandableListVie
 
         AndroidTreeView tView = new AndroidTreeView(this, root);
         ViewGroup navView = (ViewGroup) findViewById(R.id.tree_view);
-        navView.addView(tView.getView());
+        navView.addView(tView.getView());*/
 
 
 

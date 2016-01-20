@@ -22,14 +22,12 @@
         app:headerLayout="@layout/nav_header_main"
         >
 
-        <LinearLayout
-            android:id="@+id/tree_view"
+        <RelativeLayout
+            android:id="@+id/tree_container"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginTop="192dp"
-            android:orientation="vertical">
-
-        </LinearLayout>
+            android:background="@android:color/white"/>
 
         <!--<ExpandableListView
             android:id="@+id/expanded_menu"
